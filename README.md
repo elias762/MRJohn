@@ -18,6 +18,28 @@ Dann im Browser öffnen: **http://localhost:8000**
 > Beim ersten Start werden die DB (`data/marktmonitor.db`), die zwei Cartier-Suchen und
 > vier Nachrichten-Vorlagen automatisch angelegt. Der Poller startet sofort.
 
+## Deploy (Hosting, ohne Secrets/Env-Variablen)
+
+Die App braucht **keine** versteckten Variablen oder API-Keys. Den Port gibt die
+Plattform per `$PORT` vor (wird automatisch injiziert, nichts einzutragen).
+
+**Render** (Ein-Klick via Blueprint): Repo verbinden → `render.yaml` wird erkannt → Deploy.
+**Railway / Heroku**: nutzen automatisch das `Procfile`.
+
+Start-Befehl (steckt schon in `Procfile`/`render.yaml`):
+
+```
+uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+```
+
+> **Hinweise zum Hosting:**
+> - Die SQLite-Datei liegt auf dem (bei Free-Tiers oft **flüchtigen**) Dateisystem —
+>   bei Redeploy/Neustart können Daten zurückgesetzt werden. Für persistente Cloud-Daten
+>   wäre die geplante Supabase-Anbindung nötig.
+> - Vinted/DataDome blocken Anfragen aus Rechenzentrums-IPs oft stärker als von zu Hause;
+>   der Poller läuft dann ggf. in Backoff. Für zuverlässiges Polling ist lokaler Betrieb robuster.
+> - Windows-Toasts (`winotify`) werden auf Linux-Hosts automatisch übersprungen.
+
 ## Bedienung
 
 - **Inserate** — Karten mit Bild, Preis, Verkäufer. Buttons:

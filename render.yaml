@@ -1,0 +1,9 @@
+# Render Blueprint — Ein-Klick-Deploy, ganz ohne Environment-Variablen/Secrets.
+# Render injiziert $PORT automatisch; sonst muss nichts konfiguriert werden.
+services:
+  - type: web
+    name: mr-johns-sniper
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"

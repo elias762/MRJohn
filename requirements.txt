@@ -1,4 +1,4 @@
 fastapi==0.129.0
 uvicorn[standard]==0.40.0
 vinted-scraper==3.1.0
-winotify==1.1.0
+winotify==1.1.0; sys_platform == "win32"

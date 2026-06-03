@@ -4,7 +4,7 @@ Liefert die JSON-API und das statische Dashboard aus und startet den Hintergrund
 Start:  uvicorn backend.main:app   (aus dem Projektordner)
 """
 import logging
-import webbrowser
+import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -23,7 +23,7 @@ log = logging.getLogger("main")
 async def lifespan(app: FastAPI):
     db.init_db()
     poller.start()
-    log.info("%s läuft — Dashboard: http://localhost:8000", config.APP_NAME)
+    log.info("%s läuft.", config.APP_NAME)
     yield
     poller.stop()
 
@@ -360,3 +360,12 @@ def index():
 
 
 app.mount("/", StaticFiles(directory=config.FRONTEND_DIR), name="static")
+
+
+# ---------- Lokaler / Hosting-Start ----------
+# Plattformen (Render/Railway/Heroku) geben den Port via $PORT vor; lokal 8000.
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.environ.get("PORT", "8000"))
+    uvicorn.run(app, host="0.0.0.0", port=port)
