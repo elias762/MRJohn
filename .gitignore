@@ -1,0 +1,21 @@
+# Daten / DB
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Claude Code (lokale Einstellungen)
+.claude/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

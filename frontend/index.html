@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mr. Johns Sniper</title>
+  <link rel="stylesheet" href="/style.css?v=5" />
+</head>
+<body>
+  <header>
+    <h1><img src="/logo.png?v=5" class="logo" width="104" height="104" alt="Logo" /> Mr. Johns Sniper</h1>
+    <div class="header-actions">
+      <span id="poll-status" class="muted"></span>
+      <div class="view-toggle" id="view-toggle">
+        <button class="vt-btn" data-mode="desktop" title="Desktop-Ansicht" aria-label="Desktop">💻</button>
+        <button class="vt-btn" data-mode="mobile" title="Mobile-Ansicht" aria-label="Mobil">📱</button>
+      </div>
+      <button id="btn-poll-now" class="btn">Jetzt pollen</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="overview">Übersicht</button>
+    <button class="tab" data-tab="listings">Inserate<span id="new-badge" class="tab-badge" hidden></span></button>
+    <button class="tab" data-tab="searches">Suchen</button>
+    <button class="tab" data-tab="inquiries">Anfragen</button>
+    <button class="tab" data-tab="purchases">Ein-/Verkäufe</button>
+    <button class="tab" data-tab="templates">Vorlagen</button>
+  </nav>
+
+  <main>
+    <!-- ÜBERSICHT / DASHBOARD -->
+    <section id="tab-overview" class="panel active">
+      <div id="kpis" class="kpi-grid"></div>
+      <h2 class="section-title">Monatsgewinn</h2>
+      <table id="monthly-table" class="table">
+        <thead><tr><th>Monat</th><th>Verkäufe</th><th>Umsatz</th><th>Gewinn</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- INSERATE -->
+    <section id="tab-listings" class="panel">
+      <div class="toolbar">
+        <select id="filter-search"><option value="">Alle Suchen</option></select>
+        <select id="filter-status">
+          <option value="">Alle Status</option>
+          <option value="neu">Neu</option>
+          <option value="gesehen">Gesehen</option>
+          <option value="angefragt">Angefragt</option>
+          <option value="gekauft">Gekauft</option>
+          <option value="ignoriert">Ignoriert</option>
+        </select>
+        <label class="muted"><input type="checkbox" id="auto-refresh" checked /> Auto-Aktualisieren</label>
+      </div>
+      <div id="listings" class="cards"></div>
+    </section>
+
+    <!-- SUCHEN -->
+    <section id="tab-searches" class="panel">
+      <form id="form-search" class="form-inline">
+        <input type="hidden" id="search-id" />
+        <input id="search-name" placeholder="Name (z.B. Cartier Santos)" required />
+        <input id="search-query" placeholder="Suchbegriff (z.B. cartier santos)" required />
+        <input id="search-pmin" type="number" placeholder="Preis min" min="0" />
+        <input id="search-pmax" type="number" placeholder="Preis max" min="0" />
+        <input id="search-interval" type="number" placeholder="Intervall (s)" value="60" min="30" />
+        <button class="btn primary" type="submit">Speichern</button>
+        <button class="btn" type="button" id="search-reset">Neu</button>
+      </form>
+      <div class="table-wrap">
+        <table id="searches-table" class="table">
+          <thead><tr>
+            <th>Aktiv</th><th>Name</th><th>Suchbegriff</th><th>Preis</th>
+            <th>Intervall</th><th>Zuletzt</th><th>Status</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ANFRAGEN -->
+    <section id="tab-inquiries" class="panel">
+      <div class="table-wrap">
+        <table id="inquiries-table" class="table">
+          <thead><tr>
+            <th>Inserat</th><th>Verkäufer</th><th>Preis</th><th>Nachricht</th>
+            <th>Status</th><th>Notizen</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- EIN-/VERKÄUFE -->
+    <section id="tab-purchases" class="panel">
+      <form id="form-purchase" class="form-inline">
+        <input id="p-order" placeholder="Order-Nr." />
+        <input id="p-name" placeholder="Artikelname" required />
+        <input id="p-product" placeholder="Produkt (z.B. Cartier Tank)" />
+        <input id="p-bought" type="number" step="0.01" placeholder="Einkauf €" />
+        <input id="p-bdate" type="date" />
+        <input id="p-platform" placeholder="Plattform" />
+        <button class="btn primary" type="submit">Einkauf erfassen</button>
+      </form>
+      <div class="table-wrap">
+        <table id="purchases-table" class="table">
+          <thead><tr>
+            <th>Order-Nr.</th><th>Artikel</th><th>Produkt</th><th>Einkauf</th><th>Datum</th>
+            <th>Verkauf</th><th>Verk.-Datum</th><th>Kanal</th><th>Marge</th><th>Notizen</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VORLAGEN -->
+    <section id="tab-templates" class="panel">
+      <form id="form-template" class="form-col">
+        <input type="hidden" id="tpl-id" />
+        <input id="tpl-name" placeholder="Vorlagen-Name" required />
+        <textarea id="tpl-body" rows="3" placeholder="Text mit Platzhaltern {title} {price} {currency} {seller} {url} {brand}" required></textarea>
+        <div>
+          <button class="btn primary" type="submit">Speichern</button>
+          <button class="btn" type="button" id="tpl-reset">Neu</button>
+        </div>
+      </form>
+      <div id="templates-list" class="cards"></div>
+    </section>
+  </main>
+
+  <!-- Kauf-Dialog (öffnet sich über den „Gekauft"-Button) -->
+  <dialog id="purchase-dialog">
+    <h3>Kauf erfassen</h3>
+    <p class="muted" id="purchase-listing-title"></p>
+    <label>Artikelname</label>
+    <input id="pd-name" />
+    <label>Produkt (z.B. Cartier Tank)</label>
+    <input id="pd-product" />
+    <label>Tatsächlicher EK-Preis (€)</label>
+    <input id="pd-bought" type="number" step="0.01" />
+    <label>Kaufdatum</label>
+    <input id="pd-bdate" type="date" />
+    <label>Order-Nr. (optional)</label>
+    <input id="pd-order" />
+    <div class="dialog-actions">
+      <button class="btn" id="pd-cancel" type="button">Abbrechen</button>
+      <button class="btn primary" id="pd-save" type="button">Als gekauft speichern</button>
+    </div>
+  </dialog>
+
+  <!-- Anfrage-Dialog -->
+  <dialog id="inquire-dialog">
+    <h3>Anfrage senden</h3>
+    <p class="muted" id="inquire-listing-title"></p>
+    <label>Vorlage:
+      <select id="inquire-template"></select>
+    </label>
+    <textarea id="inquire-text" rows="5"></textarea>
+    <div class="dialog-actions">
+      <button class="btn" id="inquire-cancel" type="button">Abbrechen</button>
+      <button class="btn primary" id="inquire-send" type="button">Kopieren &amp; Inserat öffnen</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="snackbar"></div>
+
+  <script src="/app.js?v=5"></script>
+</body>
+</html>
