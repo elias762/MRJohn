@@ -18,27 +18,33 @@ Dann im Browser öffnen: **http://localhost:8000**
 > Beim ersten Start werden die DB (`data/marktmonitor.db`), die zwei Cartier-Suchen und
 > vier Nachrichten-Vorlagen automatisch angelegt. Der Poller startet sofort.
 
-## Deploy (Hosting, ohne Secrets/Env-Variablen)
+## Deploy auf Render (ohne Secrets/Env-Variablen)
 
-Die App braucht **keine** versteckten Variablen oder API-Keys. Den Port gibt die
-Plattform per `$PORT` vor (wird automatisch injiziert, nichts einzutragen).
+Die App braucht **keine** versteckten Variablen oder API-Keys. Den Port gibt Render
+per `$PORT` automatisch vor.
 
-**Render** (Ein-Klick via Blueprint): Repo verbinden → `render.yaml` wird erkannt → Deploy.
-**Railway / Heroku**: nutzen automatisch das `Procfile`.
+1. [render.com](https://render.com) → mit GitHub einloggen
+2. **New** → **Blueprint** → Repo `elias762/MRJohn` wählen
+3. Render erkennt `render.yaml` → **Apply** → fertig
 
-Start-Befehl (steckt schon in `Procfile`/`render.yaml`):
+> **Diese App ist eigentlich ein Dauer-Monitor — Serverless (z. B. Vercel) passt nicht**
+> (kein Hintergrund-Thread, read-only Dateisystem). Render läuft als persistenter Server.
 
-```
-uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-```
+### Grenzen des Free-Tiers (ehrlich)
 
-> **Hinweise zum Hosting:**
-> - Die SQLite-Datei liegt auf dem (bei Free-Tiers oft **flüchtigen**) Dateisystem —
->   bei Redeploy/Neustart können Daten zurückgesetzt werden. Für persistente Cloud-Daten
->   wäre die geplante Supabase-Anbindung nötig.
-> - Vinted/DataDome blocken Anfragen aus Rechenzentrums-IPs oft stärker als von zu Hause;
->   der Poller läuft dann ggf. in Backoff. Für zuverlässiges Polling ist lokaler Betrieb robuster.
-> - Windows-Toasts (`winotify`) werden auf Linux-Hosts automatisch übersprungen.
+- **Flüchtige Daten:** Free-Services haben kein persistentes Disk → SQLite-Daten gehen
+  bei Redeploy/Neustart verloren.
+- **Schlafmodus:** Free-Services schlafen nach ~15 Min ohne Zugriff ein → der Poller
+  pausiert bis zum nächsten Aufruf, also **keine echte 24/7-Überwachung**.
+
+**Beides lösbar mit Render Starter (~7 $/Monat):** in `render.yaml` `plan: starter` setzen
+und den `envVars`+`disk`-Block einkommentieren → persistente DB **und** kein Einschlafen.
+
+### Weitere Hinweise
+
+- Vinted/DataDome blocken Rechenzentrums-IPs oft stärker als Privat-IPs; der Poller läuft
+  dann ggf. in Backoff. Für zuverlässiges Polling ist **lokaler Betrieb** am robustesten.
+- Windows-Toasts (`winotify`) werden auf Linux-Hosts automatisch übersprungen.
 
 ## Bedienung
 

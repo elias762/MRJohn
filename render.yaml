@@ -1,5 +1,13 @@
-# Render Blueprint — Ein-Klick-Deploy, ganz ohne Environment-Variablen/Secrets.
-# Render injiziert $PORT automatisch; sonst muss nichts konfiguriert werden.
+# Render Blueprint — Ein-Klick-Deploy, ganz ohne vom Nutzer einzugebende Secrets.
+# Render injiziert $PORT automatisch.
+#
+# FREE-TIER (Default unten): laeuft sofort, ABER
+#   - Dateisystem ist fluechtig -> SQLite-Daten gehen bei Redeploy/Neustart verloren
+#   - Service schlaeft nach ~15 Min Inaktivitaet -> Poller pausiert bis zum naechsten Zugriff
+#
+# PERSISTENT + 24/7 (bezahlt, ~7 $/Monat): plan auf "starter" setzen und den
+#   markierten Block (envVars + disk) einkommentieren. Dann ueberleben Daten Neustarts
+#   und der Service schlaeft nie ein.
 services:
   - type: web
     name: mr-johns-sniper
@@ -7,3 +15,12 @@ services:
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+
+    # --- Fuer persistente Daten + 24/7 einkommentieren und plan: starter setzen ---
+    # envVars:
+    #   - key: DATA_DIR
+    #     value: /var/data
+    # disk:
+    #   name: data
+    #   mountPath: /var/data
+    #   sizeGB: 1

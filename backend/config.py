@@ -1,11 +1,14 @@
 """Zentrale Pfade und Defaults."""
+import os
 from pathlib import Path
 
 APP_NAME = "Mr. Johns Sniper"
 
 # Projekt-Wurzel (eine Ebene über backend/)
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "data"
+# Datenverzeichnis: lokal "data/", auf Hosting per DATA_DIR auf ein persistentes
+# Disk umlenkbar (in render.yaml gesetzt — kein vom Nutzer einzugebendes Secret).
+DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data"))
 FRONTEND_DIR = ROOT / "frontend"
 DB_PATH = DATA_DIR / "marktmonitor.db"
 
